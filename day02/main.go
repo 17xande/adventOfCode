@@ -14,6 +14,12 @@ var points = map[string]int{
 	"Z": 3,
 }
 
+var score = map[string]int{
+	"X": 0,
+	"Y": 3,
+	"Z": 6,
+}
+
 type play struct {
 	opponent int
 	me       int
@@ -26,6 +32,8 @@ func main() {
 	fmt.Printf("num of plays: %d\n", len(splits))
 
 	part1(splits)
+
+	part2(splits)
 }
 
 func part1(splits []string) {
@@ -54,8 +62,41 @@ func part1(splits []string) {
 	fmt.Printf("Total Score: %d\n", sumScore(plays))
 }
 
-func part2() {
+func part2(splits []string) {
+	plays := []play{}
+	for _, s := range splits {
+		ss := strings.Split(s, " ")
 
+		me := points[ss[0]]
+		if ss[1] == "Y" {
+			// Draw.
+			// do nothing
+		} else if ss[1] == "X" {
+			// Lose.
+			me -= 1
+			if me < 1 {
+				me = 3
+			}
+		} else if ss[1] == "Z" {
+			// Win.
+			me += 1
+			if me > 3 {
+				me = 1
+			}
+		}
+
+		p := play{
+			opponent: points[ss[0]],
+			me:       me,
+			score:    score[ss[1]] + me,
+		}
+
+		plays = append(plays, p)
+	}
+
+	fmt.Printf("first 14: %+v\n", plays[:14])
+
+	fmt.Printf("Total Score: %d\n", sumScore(plays))
 }
 
 func sumScore(plays []play) int {
