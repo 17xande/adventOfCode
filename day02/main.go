@@ -22,10 +22,14 @@ type play struct {
 
 func main() {
 	splits := strings.Split(input, "\n")
-	plays := []play{}
 
 	fmt.Printf("num of plays: %d\n", len(splits))
 
+	part1(splits)
+}
+
+func part1(splits []string) {
+	plays := []play{}
 	for _, s := range splits {
 		ss := strings.Split(s, " ")
 		p := play{
@@ -48,6 +52,10 @@ func main() {
 	fmt.Printf("first 14: %+v\n", plays[:14])
 
 	fmt.Printf("Total Score: %d\n", sumScore(plays))
+}
+
+func part2() {
+
 }
 
 func sumScore(plays []play) int {
