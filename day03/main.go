@@ -85,7 +85,18 @@ func main() {
 		sum += s.priority
 	}
 
-	fmt.Printf("Priority sum: %d\n", sum)
+	fmt.Printf("Sack priority sum: %d\n", sum)
+
+	groups := parseGroups(&sacks)
+
+	sum = 0
+	for _, g := range groups {
+		findBadge(&g)
+		// fmt.Printf("Group %d: %s %s %s Badge: %c Priority: %d\n", i, g.sacks[0].whole, g.sacks[1].whole, g.sacks[2].whole, g.badge, g.priority)
+		sum += g.priority
+	}
+
+	fmt.Printf("Group priority sum: %d\n", sum)
 }
 
 func parse(lines []string) []sack {
@@ -125,8 +136,35 @@ func findPriority(sack *sack) {
 	}
 }
 
-func findBadge(sacks *[]sack) {
+func parseGroups(sacks *[]sack) []group {
+	groups := []group{}
+	g := group{
+		sacks: [3]sack{},
+	}
 
+	for i, s := range *sacks {
+		if i != 0 && i%3 == 0 {
+			groups = append(groups, g)
+			g = group{
+				sacks: [3]sack{},
+			}
+		}
+
+		g.sacks[i%3] = s
+	}
+
+	groups = append(groups, g)
+	return groups
+}
+
+func findBadge(g *group) {
+	for _, r := range g.sacks[0].whole {
+		if strings.Contains(g.sacks[1].whole, string(r)) && strings.Contains(g.sacks[2].whole, string(r)) {
+			g.badge = r
+			g.priority = priorities[r]
+			break
+		}
+	}
 }
 
 func input() []string {
