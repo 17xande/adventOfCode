@@ -20,12 +20,16 @@ func main() {
 	stacks := parseStacks(rawStacks)
 	moves := parseMoves(rawMoves)
 
-	for _, m := range moves {
-		// fmt.Printf("\nmove no: %d (%v)\n", i, m)
-		stacks.move(m)
-	}
 	for j, s := range stacks {
 		fmt.Printf("%d: %+v\n", j, string(s))
+	}
+
+	for _, m := range moves[:10] {
+		// fmt.Printf("\nmove no: %d (%v)\n", i, m)
+		// for j, s := range stacks {
+		// 	fmt.Printf("%d: %+v\n", j, string(s))
+		// }
+		stacks.move(m)
 	}
 }
 
@@ -50,7 +54,7 @@ func parseStacks(rawStacks []string) stacks {
 	stacks := stacks{}
 
 	for _, rs := range rawStacks {
-		crates := strings.Split(rs[1:len(rs)-1], "][")
+		crates := strings.Split(rs[1:len(rs)-1], " ")
 		for j, c := range crates {
 			crate := []rune(c)[0]
 			stacks[j] = append(stacks[j], crate)
