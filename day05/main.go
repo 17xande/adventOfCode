@@ -28,11 +28,22 @@ func main() {
 		stacks.move(m)
 	}
 
-	for j, s := range stacks {
+	stacks.print()
+
+	stacks = parseStacks(rawStacks)
+	for _, m := range moves {
+		stacks.moveMultiple(m)
+	}
+
+	stacks.print()
+}
+
+func (s *stacks) print() {
+	for j, s := range s {
 		fmt.Printf("%d: %+v\n", j, string(s))
 	}
 
-	for _, s := range stacks {
+	for _, s := range s {
 		l := len(s) - 1
 		if l == -1 {
 			fmt.Printf(" ")
@@ -40,6 +51,15 @@ func main() {
 		}
 		fmt.Printf("%s", string(s[l]))
 	}
+
+	println()
+}
+
+func (s *stacks) moveMultiple(m move) {
+	start := len(s[m.source]) - m.amount
+	crates := s[m.source][start:]
+	s[m.source] = s[m.source][:start]
+	s[m.destination] = append(s[m.destination], crates...)
 }
 
 func (s *stacks) move(m move) {
