@@ -6,6 +6,13 @@ import (
 	"strings"
 )
 
+type file struct {
+	name     string
+	size     int
+	isDir    bool
+	children []file
+}
+
 func main() {
 	lines := input()
 
