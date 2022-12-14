@@ -18,11 +18,33 @@ type file struct {
 func main() {
 	lines := input()
 	root := parse(lines)
-	root.print(0)
+	root.sumSize()
+	// root.print(0)
 	sum := sumDirUnder(root, 100000)
+	fmt.Printf("Sum: %d\n", sum)
 
-	fmt.Printf("\nSum: %d\n", sum)
+	available := 70000000 - root.size
+	required := 30000000 - available
+	fmt.Printf("\nCurrent available space: %d, require additional space of: %d\n", available, required)
 
+	under := findDirUnder(root, 30000000, required)
+	fmt.Printf("Found dir %d large to delete\n", under)
+}
+
+func findDirUnder(f *file, min, limit int) int {
+	for _, c := range f.children {
+		if !c.isDir {
+			continue
+		}
+
+		if c.size >= limit && c.size < min {
+			min = c.size
+		}
+
+		min = findDirUnder(c, min, limit)
+	}
+
+	return min
 }
 
 func sumDirUnder(f *file, limit int) int {
