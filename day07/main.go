@@ -19,7 +19,7 @@ func main() {
 	lines := input()
 	root := parse(lines)
 	root.sumSize()
-	// root.print(0)
+	root.print(0)
 	sum := sumDirUnder(root, 100000)
 	fmt.Printf("Sum: %d\n", sum)
 
