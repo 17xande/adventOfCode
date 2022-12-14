@@ -12,6 +12,7 @@ type file struct {
 	size     int
 	isDir    bool
 	children map[string]*file
+	parent   *file
 }
 
 func main() {
@@ -52,48 +53,47 @@ func parse(lines []string) *file {
 		children: make(map[string]*file),
 	}
 
-	root.ls(lines, 2)
+	currentDir := &root
 
-	return &root
-}
-
-func (f *file) ls(lines []string, currentLine int) {
-	for i := currentLine; i < len(lines); i++ {
-		l := lines[i]
+	for _, l := range lines[1:] {
 		if l == "$ cd .." {
-			return
+			currentDir.sumSize()
+			currentDir = currentDir.parent
+			continue
 		}
 
-		var child file
 		if l[:4] == "$ cd" {
-			f = f.children[l[5:]]
+			currentDir = currentDir.children[l[5:]]
 			continue
 		}
 
 		if l[:4] == "$ ls" {
-			f.ls(lines, i+1)
-			break
+			continue
 		}
 
+		var child file
 		if l[:3] == "dir" {
 			child = file{
 				name:     l[4:],
 				isDir:    true,
 				children: make(map[string]*file),
+				parent:   currentDir,
 			}
 		} else {
 			s := strings.Split(l, " ")
 			size, _ := strconv.Atoi(s[0])
 			child = file{
-				name:  s[1],
-				isDir: false,
-				size:  size,
+				name:   s[1],
+				isDir:  false,
+				size:   size,
+				parent: currentDir,
 			}
 		}
 
-		f.children[child.name] = &child
+		currentDir.children[child.name] = &child
 	}
-	f.sumSize()
+	currentDir.sumSize()
+	return &root
 }
 
 func input() []string {
