@@ -19,9 +19,28 @@ func main() {
 	lines := input()
 	root := parse(lines)
 	root.print(0)
+	sum := sumDirUnder(root, 100000)
 
-	// fmt.Printf("\nResult: %+v\n", parse(lines))
+	fmt.Printf("\nSum: %d\n", sum)
 
+}
+
+func sumDirUnder(f *file, limit int) int {
+	total := 0
+
+	for _, c := range f.children {
+		if !c.isDir {
+			continue
+		}
+
+		if c.size <= limit {
+			total += c.size
+		}
+
+		total += sumDirUnder(c, limit)
+	}
+
+	return total
 }
 
 func (f *file) print(indent int) {
@@ -97,7 +116,7 @@ func parse(lines []string) *file {
 }
 
 func input() []string {
-	bytes, err := os.ReadFile("test.txt")
+	bytes, err := os.ReadFile("input.txt")
 	if err != nil {
 		panic(err)
 	}
