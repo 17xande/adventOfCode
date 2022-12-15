@@ -10,7 +10,7 @@ import (
 type forest [][]int
 
 func main() {
-	lines := input()
+	lines := input("input.txt")
 	forest := parse(lines)
 	// x := 1
 	// y := 3
@@ -19,8 +19,77 @@ func main() {
 	// fmt.Printf("\nTree (%d;%d) %d visible: %t\n", x, y, forest[y][x], v)
 
 	count := forest.count()
-
 	fmt.Printf("%d trees are visible\n", count)
+
+	best := forest.findBestTree()
+	fmt.Printf("Highest scenic score possible: %d\n", best)
+}
+
+func (f *forest) viewingDistance(x, y int) int {
+	fo := *f
+	tree := fo[y][x]
+
+	// Viewing distance to the left.
+	vdl := 0
+	for i := x - 1; i >= 0; i-- {
+		t := fo[y][i]
+		if t >= tree {
+			vdl++
+			break
+		}
+		vdl++
+	}
+
+	// Viewer distance to the right.
+	vdr := 0
+	for i := x + 1; i < len(fo[0]); i++ {
+		t := fo[y][i]
+		if t >= tree {
+			vdr++
+			break
+		}
+		vdr++
+	}
+
+	// Viewer distance to the top.
+	vdt := 0
+	for i := y - 1; i >= 0; i-- {
+		t := fo[i][x]
+		if t >= tree {
+			vdt++
+			break
+		}
+		vdt++
+	}
+
+	// Viewer distance to the bottom.
+	vdb := 0
+	for i := y + 1; i < len(fo); i++ {
+		t := fo[i][x]
+		if t >= tree {
+			vdb++
+			break
+		}
+		vdb++
+	}
+
+	return vdl * vdr * vdt * vdb
+}
+
+func (f *forest) findBestTree() int {
+	best := 0
+	fo := *f
+
+	for y := 1; y < len(fo)-1; y++ {
+		for x := 1; x < len(fo[0])-1; x++ {
+			vd := f.viewingDistance(x, y)
+			if vd > best {
+				best = vd
+			}
+		}
+	}
+
+	return best
 }
 
 func (f *forest) count() int {
@@ -96,7 +165,6 @@ func (f *forest) treeVisible(x, y int) bool {
 	// 	fmt.Printf("%v\n", fore[y+1:])
 	// }
 	return visBot
-
 }
 
 func parse(lines []string) forest {
@@ -117,8 +185,8 @@ func parse(lines []string) forest {
 	return forest
 }
 
-func input() []string {
-	bytes, err := os.ReadFile("input.txt")
+func input(name string) []string {
+	bytes, err := os.ReadFile(name)
 	if err != nil {
 		panic(err)
 	}
